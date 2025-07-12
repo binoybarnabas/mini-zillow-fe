@@ -3,9 +3,12 @@ import { useState } from 'react';
 import { Input } from '@/components/Input';
 import { Select } from '@/components/Select';
 import { X, Search } from 'lucide-react';
+import { Button } from './Button';
+import PropertyModal from '@/app/property-finder/PropertyAdd';
 
 export default function SearchNavBar() {
   const [location, setLocation] = useState('Miami, FL');
+  const [modalOpen, setModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     saleType: '',
     price: '',
@@ -20,7 +23,7 @@ export default function SearchNavBar() {
 
   return (
     <div className="fixed top-0 z-50 w-full bg-white px-4 py-3 border-b">
-      <div className="flex flex-wrap gap-3 items-center">
+      <div className="flex flex-wrap gap-3 items-center w-full">
         {/* Location Input */}
         <div className="flex items-center border rounded px-2 py-1 w-full sm:w-64">
           <Input
@@ -28,14 +31,14 @@ export default function SearchNavBar() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="Search location"
-            className="border-none p-0 focus:ring-0 focus:outline-none w-full"
+            className="border-none p-0 focus:ring-0 focus:outline-none w-full text-gray-800"
           />
           {location && (
-            <button onClick={() => setLocation('')} className="p-1 text-gray-500 hover:text-gray-700">
+            <button onClick={() => setLocation('')} className="p-1 text-gray-800 hover:text-gray-700">
               <X size={16} />
             </button>
           )}
-          <button className="p-1 text-gray-600 hover:text-gray-800">
+          <button className="p-1 text-gray-800 hover:text-gray-900">
             <Search size={16} />
           </button>
         </div>
@@ -50,6 +53,7 @@ export default function SearchNavBar() {
           ]}
           value={filters.saleType}
           onChange={handleFilterChange('saleType')}
+          className="text-gray-800"
         />
 
         <Select
@@ -62,6 +66,7 @@ export default function SearchNavBar() {
           ]}
           value={filters.price}
           onChange={handleFilterChange('price')}
+          className="text-gray-800"
         />
 
         <Select
@@ -74,32 +79,13 @@ export default function SearchNavBar() {
           ]}
           value={filters.beds}
           onChange={handleFilterChange('beds')}
+          className="text-gray-800"
         />
-
-        <Select
-          id="homeType"
-          options={[
-            { value: '', label: 'Home Type' },
-            { value: 'house', label: 'House' },
-            { value: 'apartment', label: 'Apartment' },
-            { value: 'condo', label: 'Condo' },
-          ]}
-          value={filters.homeType}
-          onChange={handleFilterChange('homeType')}
-        />
-
-        <Select
-          id="more"
-          options={[
-            { value: '', label: 'More' },
-            { value: 'garage', label: 'Has Garage' },
-            { value: 'pool', label: 'Has Pool' },
-            { value: 'basement', label: 'Has Basement' },
-          ]}
-          value={filters.more}
-          onChange={handleFilterChange('more')}
-        />
+        <div className="w-64">
+          <Button onClick={() => setModalOpen(true)} className="px-3 py-1 text-sm rounded-md whitespace-nowrap">Add New Property</Button>
+        </div>
       </div>
+      <PropertyModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }

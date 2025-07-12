@@ -4,9 +4,9 @@ import React, { ChangeEvent } from 'react';
 export type InputProps = {
   label?: string;
   id: string;
-  type?: string;
+  type?: string ;
   placeholder?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   error?: string;
