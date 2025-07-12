@@ -2,9 +2,8 @@
 import { notFound } from 'next/navigation';
 
 type PropertyDetailPageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
-
 const mockData = [
   {
     id: '1',
@@ -19,9 +18,12 @@ const mockData = [
   // ... add more mock properties
 ];
 
-export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
-  console.log("params id", params);
-  const property = mockData.find((p) => p.id === params.id);
+export default async function PropertyDetailPage({params}: PropertyDetailPageProps) {
+  
+  const { id } = await params;
+  console.log("params id", id);
+
+  const property = mockData.find((p) => p.id === id);
 
   if (!property) return notFound();
 
