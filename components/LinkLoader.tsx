@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { Loader2 } from 'lucide-react';
-import Link from 'next/link';
 
 type Props = {
   href: string;

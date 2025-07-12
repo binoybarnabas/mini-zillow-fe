@@ -1,6 +1,6 @@
 // app/property/[id]/page.tsx
 import { notFound } from 'next/navigation';
-
+import Image from 'next/image';
 type PropertyDetailPageProps = {
   params: Promise<{ id: string }>;
 };
@@ -36,11 +36,13 @@ export default async function PropertyDetailPage({params}: PropertyDetailPagePro
       <p className="text-md text-gray-600 mb-6">{property.address}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {property.images.map((src, i) => (
-          <img
+          <Image
             key={i}
             src={src}
             alt={`Property image ${i}`}
             className="rounded-lg w-full h-64 object-cover"
+            width={800} // You can adjust this
+            height={256} // h-64 = 16rem = 256px
           />
         ))}
       </div>

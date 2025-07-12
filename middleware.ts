@@ -12,8 +12,8 @@ export function middleware(request: NextRequest) {
 
   // If not logged in and accessing a protected route → redirect to login
   if (!token && !isPublic) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
-    // return NextResponse.redirect(new URL('/property-finder', request.url));
+    // return NextResponse.redirect(new URL('/auth/login', request.url));
+    return NextResponse.redirect(new URL('/property-finder', request.url));
   }
 
   // If logged in and trying to access login/register → redirect to dashboard

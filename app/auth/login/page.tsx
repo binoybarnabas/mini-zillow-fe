@@ -7,7 +7,6 @@ import FullScreenLoader from '@/components/Loader';
 import { post } from '@/utils/api';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/Button';
-import Link from 'next/link';
 import LinkWithLoader from '@/components/LinkLoader';
 
 export default function LoginPage() {
@@ -45,7 +44,7 @@ export default function LoginPage() {
       const response = await post<{ token: string; user: any }>('/auth/login', {
       email,
       password,
-    });
+    }:{ email: string,password: string });
 
       if (response.status != 200) {
         setErrors({ server: 'Login failed' });
