@@ -6,6 +6,9 @@ import family from '../../../assets/family.jpg';
 import FullScreenLoader from '@/components/Loader';
 import { post } from '@/utils/api';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/Button';
+import Link from 'next/link';
+import LinkWithLoader from '@/components/LinkLoader';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -104,20 +107,20 @@ export default function LoginPage() {
           {errors.server && <p className="text-red-600 text-sm mt-3">{errors.server}</p>}
 
           {/* Continue Button */}
-          <button
+          <Button
             onClick={handleLogin}
-            disabled={loading}
-            className="w-full bg-blue-600 text-white rounded py-2 my-4 hover:bg-blue-700 disabled:opacity-50"
+            loading={loading}
+            loadingText="Logging in..."
           >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+            Login
+          </Button>
 
           {/* Create account link */}
           <p className="text-sm mb-4 text-gray-500">
             New to Mini Zillow?{' '}
-            <a href="#" className="text-blue-600 font-medium hover:underline">
+            <LinkWithLoader href="/auth/register" className="text-blue-600 font-medium hover:underline">
               Create account
-            </a>
+            </LinkWithLoader>
           </p>
 
           {/* Terms */}
