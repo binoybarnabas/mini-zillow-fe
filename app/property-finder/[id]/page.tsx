@@ -6,6 +6,7 @@ import { get } from '@/utils/api';
 import { PropertyInfo } from '@/types/Property';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import FullScreenLoader from '@/components/Loader';
 
 function isUUID(str: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
@@ -17,6 +18,7 @@ export default function PropertyDetailPage() {
 
   const [property, setProperty] = useState<PropertyInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!id || !isUUID(id)) {
@@ -26,16 +28,24 @@ export default function PropertyDetailPage() {
 
     const fetchProperty = async () => {
       try {
+        setLoading(true);
         const res = await get<{ property: PropertyInfo }>(`/property/${id}`);
         if (!res.data.property) {
           setError('Property not found');
         } else {
           setProperty(res.data.property);
         }
-      } catch (err: any) {
-        console.error('Fetch error:', err);
-        setError('Failed to fetch property details');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error("Fetch error:", err.message);
+        } else {
+          console.error("Unexpected error", err);
+        }
       }
+      finally {
+        setLoading(false);
+      }
+
     };
 
     fetchProperty();
@@ -64,7 +74,9 @@ export default function PropertyDetailPage() {
   }
 
   return (
+    
     <div className="max-w-4xl mx-auto p-6">
+      {loading && <FullScreenLoader />}
       <h1 className="text-3xl font-bold mb-4 text-gray-800">{price}$</h1>
       <p className="text-lg text-gray-700 mb-2">
         {beds} bds · {baths} ba · {sqft} sqft
