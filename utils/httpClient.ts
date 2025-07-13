@@ -39,7 +39,6 @@ httpClient.interceptors.request.use(
   }
 );
 
-
 httpClient.interceptors.response.use(
   response => response,
   error => {

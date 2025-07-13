@@ -66,15 +66,15 @@ export default function SignupPage() {
     try {
       // Simulate registration API
       console.log("User submitted:", formData);
-      const { confirmPassword, ...userData } = formData;
+      const { confirmPassword: _ , ...userData } = formData;
 
-      const response = await post<{ token: string; user: any }>(
+      const response_ = await post<{ token: string; user: {email: string; name:string; id: number}}>(
         "/auth/register",
         userData
       );
 
       setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-
+      
       router.push("/auth/login");
     } catch (err) {
       console.error("Signup error:", err);

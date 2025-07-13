@@ -41,7 +41,7 @@ export default function LoginPage() {
     setErrors({}); // Clear server error
 
     try {
-      const response = await post<{ token: string; user: any }>('/auth/login', {
+      const response = await post<{ token: string; user: {id: number; name: string; email: string;}}>('/auth/login', {
       email,
       password,
     });
@@ -53,7 +53,7 @@ export default function LoginPage() {
         router.push('/property-finder');
       }
     } catch (err) {
-      setErrors({ server: 'Something went wrong. Please try again.' });
+      setErrors({ server: err + 'Something went wrong. Please try again.'  });
     } finally {
       setLoading(false);
     }

@@ -25,3 +25,5 @@ export type FileUploadProps = {
     </div>
   )
 );
+
+FileUpload.displayName = 'FileUpload';
