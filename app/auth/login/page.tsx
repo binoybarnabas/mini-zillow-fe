@@ -44,7 +44,7 @@ export default function LoginPage() {
       const response = await post<{ token: string; user: any }>('/auth/login', {
       email,
       password,
-    }:{ email: string,password: string });
+    });
 
       if (response.status != 200) {
         setErrors({ server: 'Login failed' });

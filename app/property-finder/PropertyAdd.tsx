@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { FileUpload } from '@/components/FileUpload';
+import { post } from '@/utils/api';
 
 type PropertyFormData = {
   price: string;
@@ -12,7 +13,7 @@ type PropertyFormData = {
   sqft: number;
   address: string;
   realtor: string;
-  realtorLogo: string;
+  // realtorLogo: string;
   images: File[];
 };
 
@@ -24,7 +25,7 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
     sqft: 0,
     address: '',
     realtor: '',
-    realtorLogo: '',
+    // realtorLogo: '',
   });
 
   const [images, setImages] = useState<File[]>([]);
@@ -38,15 +39,12 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log("Files selected:", files);
     if (files) {
       const fileArray = Array.from(files);
-      console.log("File array:", fileArray);
-      setImages(prev => [...prev, ...fileArray]); // Append new files to existing images
-      console.log("images",images);
-      console.log("Updated images state:", [...images, ...fileArray].length);
+      setImages(prev => [...prev, ...fileArray]);// Append new files to existing images
     }
   };
+
 
   const clearAndClose = () => {
     setFormData({
@@ -56,7 +54,7 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
         sqft: 0,
         address: '',
         realtor: '',
-        realtorLogo: '',
+        // realtorLogo: '',
     });
 
     setImages([]);
@@ -73,11 +71,8 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/properties', {
-        method: 'POST',
-        body: data,
-      });
-      if (!res.ok) throw new Error('Failed to create property');
+      const res = await post('/property', data);
+      if (res.status != 201) throw new Error('Failed to create property');
       onClose(); // close modal on success
     } catch (err) {
       console.error(err);
@@ -106,15 +101,15 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-xl shadow-lg w-full max-w-2xl space-y-4 overflow-y-auto max-h-[90vh]"
       >
-        <h2 className="text-2xl font-bold text-center">Add Property</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-500">Add Property</h2>
 
-        <Input id="price" label="Price" value={formData.price} onChange={handleChange} required />
-        <Input id="beds" label="Beds" type="number" value={formData.beds} onChange={handleChange} required />
-        <Input id="baths" label="Baths" type="number" value={formData.baths} onChange={handleChange} required />
-        <Input id="sqft" label="Square Feet" type="number" value={formData.sqft} onChange={handleChange} required />
-        <Input id="address" label="Address" value={formData.address} onChange={handleChange} required />
-        <Input id="realtor" label="Realtor" value={formData.realtor} onChange={handleChange} required />
-        <Input id="realtorLogo" label="Realtor Logo URL" value={formData.realtorLogo} onChange={handleChange} required />
+        <Input id="price" label="Price" value={formData.price} onChange={handleChange} className="text-gray-500" required />
+        <Input id="beds" label="Beds" type="number" value={formData.beds} onChange={handleChange} className="text-gray-500" required />
+        <Input id="baths" label="Baths" type="number" value={formData.baths} onChange={handleChange} className="text-gray-500" required />
+        <Input id="sqft" label="Square Feet" type="number" value={formData.sqft} onChange={handleChange} className="text-gray-500" required />
+        <Input id="address" label="Address" value={formData.address} onChange={handleChange} className="text-gray-500" required />
+        <Input id="realtor" label="Realtor" value={formData.realtor} onChange={handleChange} className="text-gray-500" required />
+        {/* <Input id="realtorLogo" label="Realtor Logo URL" value={formData.realtorLogo} onChange={handleChange} className="text-gray-500" required /> */}
 
         <div className="flex flex-col gap-2">
           <FileUpload

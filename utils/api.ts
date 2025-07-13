@@ -1,6 +1,6 @@
 // utils/api.ts
 import httpClient from './httpClient';
-
+import { AxiosRequestConfig } from 'axios';
 export const get = async <T>(url: string, config = {}) => {
   const res = await httpClient.get<T>(url, config);
   return {
