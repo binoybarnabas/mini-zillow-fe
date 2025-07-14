@@ -1,5 +1,5 @@
 // app/auth/layout.tsx or wherever your layout file is
-"use client";
+'use client';
 import AuthGuard from "@/components/AuthGuard";
 import SearchNavBar from "@/components/NavBar";
 import { usePathname } from "next/navigation";

@@ -12,12 +12,12 @@ export default function SearchNavBar() {
   const [location, setLocation] = useState('Miami, FL');
   const [modalOpen, setModalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [user, setUser] = useState<{ role: string } | null>({role: 'admin'});
+  const [isAdminuser, setIsAdminUser] = useState<boolean>(false);
 
     useEffect(() => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      const isAdmin = localStorage.getItem('isAdmin');
+      if (isAdmin) {
+        setIsAdminUser(localStorage.getItem('isAdmin') === 'true');
       }
     }, []);
 
@@ -121,7 +121,7 @@ export default function SearchNavBar() {
         {/* Right Section: Add Property + Profile */}
         <div className="flex items-center gap-7">
           {/* Admin Panel link (visible only to admin users) */}
-          {user?.role === 'admin' && (
+          {isAdminuser && (
             <div className="flex flex-wrap gap-5 items-center">
             <LinkWithLoader
               href="/admin"
