@@ -41,7 +41,7 @@ export default function LoginPage() {
     setErrors({}); // Clear server error
 
     try {
-      const response = await post<{ token: string; user: {id: number; name: string; email: string;}}>('/auth/login', {
+      const response = await post<{ token: string; user: {id: number; name: string; email: string; isAdmin: boolean}}>('/auth/login', {
       email,
       password,
     });
@@ -50,10 +50,12 @@ export default function LoginPage() {
         setErrors({ server: 'Login failed' });
       } else {
         localStorage.setItem("token",response.data.token);
+        localStorage.setItem("isAdmin", response.data.user.isAdmin.toString());
         router.push('/property-finder');
       }
     } catch (err) {
-      setErrors({ server: err + 'Something went wrong. Please try again.'  });
+      void err;
+      setErrors({ server: 'Something went wrong. Please check your credentials and try again.'  });
     } finally {
       setLoading(false);
     }
