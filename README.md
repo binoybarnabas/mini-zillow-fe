@@ -7,7 +7,7 @@ This is the frontend for the **Mini-Zillow** project, built with **Next.js** and
 ## 🚀 Features
 
 - 🔒 Jwt Authentication (Login, Register) - User/Admin
-- 🏘 Property Listings
+- 🏘 Property Listings, Property adding, Property details, Admin dashboard
 - 📄 Dynamic Forms with Validation
 - 🌐 API integration with backend (using Axios)
 - 🎨 Styled with Tailwind CSS
