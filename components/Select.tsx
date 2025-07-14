@@ -7,6 +7,7 @@ export type SelectProps = {
   value?: string;
   onChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
+  required?: boolean;
 };
 
 export const Select = ({
@@ -16,6 +17,7 @@ export const Select = ({
   value,
   onChange,
   className = '',
+  required = false,
 }: SelectProps) => {
   const [mounted, setMounted] = useState(false);
 
@@ -32,7 +34,7 @@ export const Select = ({
     >
       {label && (
         <label htmlFor={id} className="text-sm font-medium text-gray-700">
-          {label}
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <select
