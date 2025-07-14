@@ -12,5 +12,7 @@ export type PropertyInfo = {
   sqft: number;
   address: string;
   realtor: string;
+  description: string;
+  listingType: number;
   images: Blob[];
 };

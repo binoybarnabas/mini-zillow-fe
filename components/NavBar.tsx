@@ -6,11 +6,21 @@ import { X, Search, User, ChevronDown } from 'lucide-react';
 import { Button } from './Button';
 import PropertyModal from '@/app/property-finder/PropertyAdd';
 import { useRouter } from 'next/navigation';
+import LinkWithLoader from './LinkLoader';
 
 export default function SearchNavBar() {
   const [location, setLocation] = useState('Miami, FL');
   const [modalOpen, setModalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [user, setUser] = useState<{ role: string } | null>({role: 'admin'});
+
+    useEffect(() => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    }, []);
+
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -106,9 +116,22 @@ export default function SearchNavBar() {
             className="text-gray-800"
           />
         </div>
-
+          
+        
         {/* Right Section: Add Property + Profile */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-7">
+          {/* Admin Panel link (visible only to admin users) */}
+          {user?.role === 'admin' && (
+            <div className="flex flex-wrap gap-5 items-center">
+            <LinkWithLoader
+              href="/admin"
+              className="text-lg text-blue-400 hover:text-blue-600 transition-all duration-300 hover:underline hover:scale-105 inline-block"
+            >
+              Dashboard
+            </LinkWithLoader>
+            </div>  
+          )}
+
           <Button
             onClick={() => setModalOpen(true)}
             className="px-3 py-1 text-sm rounded-md whitespace-nowrap"

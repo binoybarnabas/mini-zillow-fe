@@ -64,7 +64,7 @@ export default function PropertyDetailPage() {
   }
 
   // Final field-level validation (defensive)
-  const { price, beds, baths, sqft, address, realtor, images } = property;
+  const { price, beds, baths, sqft, address, realtor, images, description } = property;
   if (!price || !beds || !baths || !sqft || !address || !realtor) {
     return (
       <div className="text-center text-red-600 py-10">
@@ -81,7 +81,7 @@ export default function PropertyDetailPage() {
       <p className="text-lg text-gray-700 mb-2">
         {beds} bds · {baths} ba · {sqft} sqft
       </p>
-      <p className="text-md text-gray-600 mb-6">{address}</p>
+      <p className="text-md text-gray-600 mb-6">Address: {address}</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {images.length > 0 ? (
@@ -101,7 +101,8 @@ export default function PropertyDetailPage() {
         )}
       </div>
 
-      <p className="text-sm text-blue-600 mt-6">{realtor}</p>
+      <p className="text-sm text-blue-600 mt-6">Realtor: {realtor}</p>
+      <p className="text-sm text-gray-600 mt-6">{description}</p>
     </div>
   );
 }
