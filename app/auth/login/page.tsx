@@ -54,6 +54,7 @@ export default function LoginPage() {
         router.push('/property-finder');
       }
     } catch (err) {
+      void err;
       setErrors({ server: 'Something went wrong. Please check your credentials and try again.'  });
     } finally {
       setLoading(false);
