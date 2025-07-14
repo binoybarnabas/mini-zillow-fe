@@ -1,15 +1,44 @@
 // utils/httpClient.ts
 import axios from 'axios';
 
+const AUTH_EXCLUDED_PATHS = ['/auth/login', '/auth/register'];
+
 const httpClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // if you are using cookies/sessions
+  // headers: {
+  //   'Content-Type': 'application/json',
+  // },
+  withCredentials: true 
 });
 
-// Optional: Add interceptors for auth or error handling
+httpClient.interceptors.request.use(
+  config => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    const isFormData = typeof FormData !== 'undefined' && config.data instanceof FormData;
+
+    if (isFormData) {
+      // Let the browser set the correct Content-Type and boundary
+      delete config.headers['Content-Type'];
+    } else {
+      config.headers['Content-Type'] = 'application/json';
+    }
+
+    const isExcluded = AUTH_EXCLUDED_PATHS.some(path =>
+      config.url?.includes(path)
+    );
+
+    if (token && !isExcluded) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
 httpClient.interceptors.response.use(
   response => response,
   error => {

@@ -7,6 +7,7 @@ import registerationFormBackground from "../../../assets/register-background.jpg
 import { post } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import FullScreenLoader from "@/components/Loader";
+import LinkWithLoader from "@/components/LinkLoader";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -63,17 +64,17 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      // Simulate registration API
-      console.log("User submitted:", formData);
+      
       const { confirmPassword, ...userData } = formData;
-
-      const response = await post<{ token: string; user: any }>(
+      void confirmPassword;
+      
+      await post<{ token: string; user: {email: string; name:string; id: number}}>(
         "/auth/register",
         userData
       );
-
+    
       setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-
+      
       router.push("/auth/login");
     } catch (err) {
       console.error("Signup error:", err);
@@ -96,7 +97,7 @@ export default function SignupPage() {
       >
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-2xl bg-white/70 dark:bg-gray-800/70 shadow-md rounded-xl p-6 space-y-4 backdrop-blur-md"
+          className="w-full max-w-2xl bg-white/70 dark:bg-gray-800/50 shadow-md rounded-xl p-6 space-y-4 backdrop-blur-md"
         >
           <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
             Sign Up
@@ -152,6 +153,12 @@ export default function SignupPage() {
           >
             Create Account
           </Button>
+          <p className="text-sm mb-4 text-gray-900">
+            Already Have an account?{' '}
+            <LinkWithLoader href="/auth/login" className="text-blue-600 font-medium hover:underline">
+              Login
+            </LinkWithLoader>
+          </p>
         </form>
       </main>
     </>

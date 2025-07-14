@@ -1,6 +1,5 @@
 // utils/api.ts
 import httpClient from './httpClient';
-
 export const get = async <T>(url: string, config = {}) => {
   const res = await httpClient.get<T>(url, config);
   return {

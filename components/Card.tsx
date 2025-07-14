@@ -4,18 +4,8 @@ import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import { Heart } from 'lucide-react';
 import Link from 'next/link';
+import { PropertyInfo } from '@/types/Property';
 
-type PropertyCardProps = {
-  id: string;
-  images: string[];
-  price: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  address: string;
-  realtor: string;
-  realtorLogo: string;
-};
 
 export default function PropertyCard({
   id,
@@ -25,27 +15,28 @@ export default function PropertyCard({
   baths,
   sqft,
   address,
-  realtor,
-  realtorLogo,
-}: PropertyCardProps) {
+  realtor
+}: PropertyInfo) {
   const [sliderRef] = useKeenSlider({ loop: true, slides: { perView: 1 } });
+  console.log("images",images);
 
   return (
     <Link href={`/property-finder/${id}`} className="hover:no-underline">
     <div className="max-w-sm rounded-xl overflow-hidden shadow-md bg-white relative transform transition duration-300 hover:scale-105">
       {/* Carousel */}
       <div className="relative h-56 w-full keen-slider rounded-t-xl" ref={sliderRef}>
-        {images.map((imgUrl, i) => (
+        {Array.isArray(images) && images.length > 0 && images.map((image, i) => (
           <div key={i} className="keen-slider__slide relative">
             <Image
-              src={imgUrl}
+              src={image.url}
               alt={`Property ${i}`}
               fill
               className="object-cover"
-              unoptimized // use this if the URLs are not from your domain
+              unoptimized
             />
           </div>
         ))}
+
 
         {/* Showcase Label */}
         <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded">
@@ -63,22 +54,11 @@ export default function PropertyCard({
             <div key={i} className="w-2 h-2 bg-gray-300 rounded-full" />
           ))}
         </div>
-
-        {/* Realtor Badge */}
-        <div className="absolute bottom-2 right-2">
-          <Image
-            src={realtorLogo}
-            alt="Realtor Logo"
-            width={80}
-            height={20}
-            unoptimized
-          />
-        </div>
       </div>
 
       {/* Property Info */}
       <div className="p-4">
-        <h2 className="text-xl font-semibold text-gray-900">{price}</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{price}$</h2>
         <p className="text-sm text-gray-700 mt-1">
           <span className="font-medium">{beds}</span> bds ·{' '}
           <span className="font-medium">{baths}</span> ba ·{' '}
