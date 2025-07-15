@@ -2,6 +2,7 @@
 "use client";
 import AuthGuard from "@/components/AuthGuard";
 import SearchNavBar from "@/components/NavBar";
+import { FormSubmitProvider } from "@/contexts/FormSubmitContext";
 import { usePathname } from "next/navigation";
 
 export default function PropertyLayout({
@@ -15,13 +16,15 @@ export default function PropertyLayout({
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gray-100">
-        {showNavbar && <SearchNavBar />}
+      <FormSubmitProvider>
+        <div className="min-h-screen bg-gray-100">
+          {showNavbar && <SearchNavBar />}
 
-        <main className="px-6 py-4">
-          {children}
-        </main>
-      </div>
+          <main className="px-6 py-4">
+            {children}
+          </main>
+        </div>
+      </FormSubmitProvider>
     </AuthGuard>
   );
 }

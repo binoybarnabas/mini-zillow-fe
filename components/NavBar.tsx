@@ -4,15 +4,17 @@ import { Input } from '@/components/Input';
 import { Select } from '@/components/Select';
 import { X, Search, User, ChevronDown } from 'lucide-react';
 import { Button } from './Button';
-import PropertyModal from '@/app/property-finder/PropertyAdd';
+import PropertyModal from '@/components/PropertyForm';
 import { useRouter } from 'next/navigation';
 import LinkWithLoader from './LinkLoader';
+import FullScreenLoader from './Loader';
 
 export default function SearchNavBar() {
   const [location, setLocation] = useState('Miami, FL');
   const [modalOpen, setModalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isAdminuser, setIsAdminUser] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(false);
 
     useEffect(() => {
       const isAdmin = localStorage.getItem('isAdmin');
@@ -37,8 +39,11 @@ export default function SearchNavBar() {
   };
 
   const handleLogout = () => {
+    setLoader(true);
     localStorage.removeItem('token');
+    localStorage.removeItem('isAdmin');
     router.push('/auth/login');
+    setLoader(false);
   };
 
   // Close profile dropdown on outside click
@@ -56,6 +61,7 @@ export default function SearchNavBar() {
 
   return (
     <div className="fixed top-0 z-50 w-full bg-white px-4 py-3 border-b">
+      {loader && <FullScreenLoader />}
       <div className="flex flex-wrap gap-3 items-center w-full justify-between">
         <div className="flex flex-wrap gap-3 items-center">
           {/* Location Input */}
@@ -132,6 +138,18 @@ export default function SearchNavBar() {
             </div>  
           )}
 
+          {/* Admin Panel link (visible only to admin users) */}
+          {
+            <div className="flex flex-wrap gap-5 items-center">
+            <LinkWithLoader
+              href="/property-finder"
+              className="text-lg text-blue-400 hover:text-blue-600 transition-all duration-300 hover:underline hover:scale-105 inline-block"
+            >
+              Home
+            </LinkWithLoader>
+            </div>  
+          }
+
           <Button
             onClick={() => setModalOpen(true)}
             className="px-3 py-1 text-sm rounded-md whitespace-nowrap"
@@ -164,7 +182,7 @@ export default function SearchNavBar() {
       </div>
 
       {/* Property Modal */}
-      <PropertyModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <PropertyModal isOpen={modalOpen} onClose={() => setModalOpen(false)} propertyToEdit={null}/>
     </div>
   );
 }

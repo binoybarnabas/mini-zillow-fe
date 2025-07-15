@@ -18,7 +18,6 @@ export default function PropertyCard({
   realtor
 }: PropertyInfo) {
   const [sliderRef] = useKeenSlider({ loop: true, slides: { perView: 1 } });
-  console.log("images",images);
 
   return (
     <Link href={`/property-finder/${id}`} className="hover:no-underline">
