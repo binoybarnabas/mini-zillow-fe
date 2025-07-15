@@ -1,30 +1,35 @@
 "use client";
 import PropertyCard from "@/components/Card"; // renamed for clarity
 import FullScreenLoader from "@/components/Loader";
+import { useFormSubmit } from "@/contexts/FormSubmitContext";
 import { PropertyInfo } from "@/types/Property";
 import { get } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const ViewProperties = () => {
   const [properties, setProperties] = useState<PropertyInfo[]>([]);
   const [loading, setLoading] = useState(false);
+  const { setOnFormSubmit } = useFormSubmit();
+
+  const fetchProperties = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await get<{ properties: PropertyInfo[] }>('/property/list');
+      setProperties(res.data.properties);
+    } catch (error) {
+      console.error('Failed to fetch properties', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        setLoading(true);
-        const res = await get<{ properties: PropertyInfo[] }>('/property/list');
-        setProperties(res.data.properties);
-      } catch (error) {
-        console.error("Failed to fetch properties", error);
-      } finally {
-        setLoading(false); // ✅ only after fetch completes
-      }
-    };
-
     fetchProperties();
-    setLoading(false);
-  }, []);
+  }, [fetchProperties]);
+
+  useEffect(() => {
+    setOnFormSubmit(() => fetchProperties);
+  }, [fetchProperties, setOnFormSubmit]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

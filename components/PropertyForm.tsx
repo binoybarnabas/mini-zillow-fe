@@ -1,12 +1,14 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { FileUpload } from '@/components/FileUpload';
-import { post } from '@/utils/api';
+import { post, put } from '@/utils/api';
 import { Textarea } from '@/components/TextArea';
 import { Select } from '@/components/Select';
+import { useFormSubmit } from '@/contexts/FormSubmitContext';
+import { PropertyInfo } from '@/types/Property';
 
 type PropertyFormData = {
   price: string;
@@ -22,7 +24,10 @@ type PropertyFormData = {
 
 type Errors = Partial<Record<keyof PropertyFormData, string>>;
 
-export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export default function PropertyModal({ isOpen, onClose, propertyToEdit }: { isOpen: boolean; onClose: () => void; propertyToEdit: PropertyInfo | null; }) {
+
+  const { onFormSubmit } = useFormSubmit();
+
   const [formData, setFormData] = useState<Omit<PropertyFormData, 'images'>>({
     price: '',
     beds: 0,
@@ -48,6 +53,22 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
     value,
     label,
   }));
+
+  useEffect(() => {
+    if(propertyToEdit) {
+      setFormData({
+        price: propertyToEdit.price,
+        beds: propertyToEdit.beds,
+        baths: propertyToEdit.baths,
+        sqft: propertyToEdit.sqft,
+        address: propertyToEdit.address,
+        realtor: propertyToEdit.realtor,
+        description: propertyToEdit.description,
+        listingType: propertyToEdit.listingType,
+      });
+      setImages([]);
+    }
+  }, [propertyToEdit]);
 
   const validateForm = (): Errors => {
     const newErrors: Errors = {};
@@ -108,14 +129,12 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
-    console.log("id", id);
-    console.log("value", value);
+
     setFormData((prev) => ({
       ...prev,
       [id]: id === 'beds' || id === 'baths' || id === 'sqft' || id === 'listingType' ? Number(value) : value,
     }));
-    console.log("form data",formData);
-    // Clear error for this field when user starts typing
+
     setErrors((prev) => ({ ...prev, [id]: '' }));
   };
 
@@ -123,13 +142,8 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
     const files = e.target.files;
     if (files) {
       const fileArray = Array.from(files);
-      const validImageTypes = ['image/jpeg', 'image/png'];
       const maxSize = 5 * 1024 * 1024; // 5MB
       const newImages = fileArray.filter((file) => {
-        if (!validImageTypes.includes(file.type)) {
-          setErrors((prev) => ({ ...prev, images: `Image ${file.name} must be a JPEG or PNG` }));
-          return false;
-        }
         if (file.size > maxSize) {
           setErrors((prev) => ({ ...prev, images: `Image ${file.name} exceeds 5MB` }));
           return false;
@@ -180,13 +194,26 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => data.append(key, value.toString()));
-    // Print all FormData entries
-    for (const [key, value] of data.entries()) {
-      console.log(`${key}:`, value, `| Type: ${typeof value}`);
-    }
     images.forEach((file) => data.append('images', file));
 
     setSubmitting(true);
+
+    //update api
+    if(propertyToEdit) {
+        try {
+        const res = await put(`/property/${propertyToEdit.id}`, data);
+        if (res.status !== 200) throw new Error('Failed to create property');
+        clearAndClose(); // Close modal and reset form on success
+      } catch (err) {
+        console.error(err);
+        // setErrors({ submit: 'Failed to create property. Please try again.' });
+      } finally {
+        onFormSubmit();
+        setSubmitting(false);
+        return;
+      }
+    }
+
     try {
       const res = await post('/property', data);
       if (res.status !== 201) throw new Error('Failed to create property');
@@ -195,6 +222,7 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
       console.error(err);
       // setErrors({ submit: 'Failed to create property. Please try again.' });
     } finally {
+      onFormSubmit();
       setSubmitting(false);
     }
   };
@@ -372,11 +400,11 @@ export default function PropertyModal({ isOpen, onClose }: { isOpen: boolean; on
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button type="button" onClick={clearAndClose}>
+          <Button type="button" disabled={submitting} onClick={clearAndClose}>
             Cancel
           </Button>
           <Button type="submit" loading={submitting} loadingText="Submitting...">
-            Add Property
+            {propertyToEdit ? 'Edit Info' : 'Add Property'}
           </Button>
         </div>
       </form>

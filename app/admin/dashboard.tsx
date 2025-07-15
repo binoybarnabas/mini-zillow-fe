@@ -1,22 +1,46 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PropertyInfo } from '@/types/Property';
 import { get, del } from '@/utils/api';
 import AdminCard from '@/components/AdminCard';
 import StatCard from '@/components/StatCard';
+import PropertyModal from '../../components/PropertyForm';
+import { useFormSubmit } from '@/contexts/FormSubmitContext';
+import FullScreenLoader from '@/components/Loader';
 
 
 export default function AdminDashboard() {
   const [properties, setProperties] = useState<PropertyInfo[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [propertyToEdit, setPropertyToEdit] = useState<PropertyInfo | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await get<{ properties: PropertyInfo[] }>('/admin/properties');
-      setProperties(res.data.properties);
-    };
+  const handleEdit = (property: PropertyInfo) => {
+    setPropertyToEdit(property);
+    setIsModalOpen(true);
+  };
 
-    fetchData();
-  }, []);
+    const [loading, setLoading] = useState(false);
+    const { setOnFormSubmit } = useFormSubmit();
+  
+    const fetchProperties = useCallback(async () => {
+      try {
+        setLoading(true);
+        const res = await get<{ properties: PropertyInfo[] }>('/admin/properties');
+        setProperties(res.data.properties);
+      } catch (error) {
+        console.error('Failed to fetch properties', error);
+      } finally {
+        setLoading(false);
+      }
+    }, []);
+  
+    useEffect(() => {
+      fetchProperties();
+    }, [fetchProperties]);
+  
+    useEffect(() => {
+      setOnFormSubmit(() => fetchProperties);
+    }, [fetchProperties, setOnFormSubmit]);
 
   const handleDelete = async (id: string) => {
     const confirmed = confirm('Are you sure you want to delete this listing?');
@@ -38,6 +62,7 @@ export default function AdminDashboard() {
   const maxPrice = priceValues.length ? Math.max(...priceValues) : 0;
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      {loading && <FullScreenLoader />}
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Admin Dashboard</h1>
 
       {/* Stats */}
@@ -52,9 +77,10 @@ export default function AdminDashboard() {
       {/* Listings */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {properties.map((property) => (
-          <AdminCard key={property.id} property={property} onDelete={handleDelete} />
+          <AdminCard key={property.id} property={property} onDelete={handleDelete} onEdit={handleEdit}/>
         ))}
       </div>
+      <PropertyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} propertyToEdit={propertyToEdit}/>
     </div>
   );
 }
