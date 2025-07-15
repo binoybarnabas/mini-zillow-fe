@@ -161,7 +161,7 @@ export default function SearchNavBar() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setProfileOpen((prev) => !prev)}
-              className="flex items-center gap-2 px-3 py-1 text-sm text-gray-800 border rounded-md hover:bg-gray-100"
+              className="flex items-center gap-2 px-3 py-1 text-sm text-gray-800 border rounded-md hover:bg-gray-100 h-9"
             >
               <User size={16} />
               <ChevronDown size={14} />
@@ -171,7 +171,7 @@ export default function SearchNavBar() {
               <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-md z-10">
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-600"
+                  className="block w-full text-left px-4 py-4 text-sm hover:bg-gray-100 text-gray-600"
                 >
                   Logout
                 </button>
